@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pukul Tikus Tanh</title>
+
+  <style>
+    h1, h2 {
+    font-size: 60px;
+    text-align: center;
+    font-family: arial;
+    margin: 10px;
+  }
+  
+  button {
+    display: block;
+    margin: auto;
+  }
+  
+
+  body{
+    background-image: url(img/back.png);
+    background-size: cover;
+    background-color: yellow;
+  }
+  .container {
+    width: 600px;
+    margin: auto;
+    cursor: url(img/palu.png) auto;
+  }
+  
+  .container:active {
+    cursor: url(img/palu.png), auto;
+    background-image: url(img/ledak.png) auto;
+  }
+  
+  .tanah {
+    width: 200px;
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+    float: left;
+  }
+  
+  .tanah::after {
+    content: '';
+    display: block;
+    width: 200px;
+    height: 100px;
+    background: url(img/tanah.png) bottom center no-repeat;
+    background-size: 80%;
+    position: absolute;
+    bottom: -25px;
+  }
+  
+  .tikus {
+    width: 100%;
+    height: 100%;
+    background: url(img/tikus.png) bottom center no-repeat;
+    background-size: 60%;
+    position: absolute;
+    top: 100px;
+    transition: top 0.3s;
+  }
+  
+  .tanah.muncul .tikus {
+    top: -15px;
+  }
+  </style>
+
+</head>
+
+<body>
+  <p>kembali ke halaman 1</p>
+  <a href="index.html">KEMBALI</a>
+  <h1>Pukul Tikus Tanah</h1>
+
+  <button type="button" class="mulai" onclick="mulai()">Mulai!</button>
+
+  <h2 class="papan-skor">0</h2>
+
+  <div class="container">
+    <div class="tanah">
+      <div class="tikus"></div>
+    </div>
+    <div class="tanah">
+      <div class="tikus"></div>
+    </div>
+    <div class="tanah">
+      <div class="tikus"></div>
+    </div>
+    <div class="tanah">
+      <div class="tikus"></div>
+    </div>
+    <div class="tanah">
+      <div class="tikus"></div>
+    </div>
+    <div class="tanah">
+      <div class="tikus"></div>
+    </div>
+  </div>
+
+  <audio src="audio/Pop.mp3" id="pop"></audio>
+  <script>
+
+const tanah = document.querySelectorAll('.tanah');
+const tikus = document.querySelectorAll('.tikus');
+const papanSkor = document.querySelector('.papan-skor');
+const pop = document.querySelector('#pop');
+
+let tanahSebelumnya;
+let selesai;
+let skor;
+
+function randomTanah(tanah) {
+  const t = Math.floor(Math.random() * tanah.length);
+  const tRandom = tanah[t];
+  if (tRandom == tanahSebelumnya) {
+    randomTanah(tanah);
+  }
+  tanahSebelumnya = tRandom;
+  return tRandom;
+}
+
+function randomWaktu(min, max) {
+  return Math.round(Math.random() * (max - min) + min);
+}
+
+function munculkanTikus() {
+  const tRandom = randomTanah(tanah);
+  const wRandom = randomWaktu(100, 1000);
+  tRandom.classList.add('muncul');
+
+  setTimeout(() => {
+    tRandom.classList.remove('muncul');
+    if (!selesai) {
+      munculkanTikus();
+    }
+  }, wRandom);
+}
+
+function mulai() {
+  selesai = false;
+  skor = 0;
+  papanSkor.textContent = 0;
+  munculkanTikus();
+  setTimeout(() => {
+    alert('WAKTU BERMAIN ANDA TELAH HABIS KLIK OKE UNTUK MELANJUTKAN')
+    selesai = true;
+  }, 10000);
+}
+
+function pukul() {
+  skor++;
+  this.parentNode.classList.remove('muncul');
+  pop.play();
+  papanSkor.textContent = skor;
+}
+
+tikus.forEach(t => {
+  t.addEventListener('click', pukul);
+});
+  </script>
+</body>
+
+</html>
